@@ -45,10 +45,12 @@ export const Clinics: CollectionConfig = {
         description: 'If your course gave you a personal code for warm-up 4, put it in this summary.',
       },
     },
-    // Add new clinic fields here, above the time slots list, so they also show above it in /admin.
-
-    // The reverse side (a join) of the one-to-many: one clinic has many time slots. The link is stored
-    // once, in each time slot's "clinic" field.
+    // Add new fields here, 
+    {
+     name: 'whatToBring',
+     type: 'array',
+     fields: [{ name: 'item', type: 'text', required: true }],
+   },
     {
       name: 'timeSlots',
       type: 'join',
