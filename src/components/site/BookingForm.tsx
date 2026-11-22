@@ -31,6 +31,7 @@ import type { Repair } from '@/payload-types'
 import type { BookingField, BookingResult, BookingValues } from '@/tasks/book-slot/createBooking'
 import { saveBooking } from '@/tasks/book-slot/saveBooking'
 import { typedValues } from '@/tasks/book-slot/typedValues'
+import { formatPrice } from '@/lib/format'
 
 type BookingFormProps = {
   // The clinic's slug: the server checks that the chosen time belongs to this clinic.
@@ -75,35 +76,35 @@ async function sendBooking(previous: BookingResult | null, formData: FormData): 
   }
 }
 
-// W6: the repair choice, ready to switch on. Remove the // in front of every line of this function.
-// Then replace the whole line {/* W6: <RepairChoice repairs={props.repairs} /> */} in the form below
-// with <RepairChoice repairs={props.repairs} />. The server side is the two lines the W6 comment in
-// createBooking.ts names (src/tasks/book-slot/createBooking.ts).
-// function RepairChoice({ repairs }: { repairs: BookingFormProps['repairs'] }) {
-//   // The repairs ticked in the last send, so they stay ticked when the form comes back.
-//   const sent = useSentValues()
-//   return (
-//     <fieldset className="grid gap-3">
-//       <legend className="mb-1 font-semibold">
-//         Repairs <span className="font-normal text-ink-soft">(optional)</span>
-//       </legend>
-//       {repairs.map((repair) => {
-//         // To show each repair's price too, replace the line under this comment with this line:
-//         //   const label = repair.name + ', ' + formatPrice(repair.price)
-//         // and add this line at the top of the file, under the other import lines:
-//         //   import { formatPrice } from '@/lib/format'
-//         // It reads each repair's own price, from the same record as the price list: nothing is copied.
-//         const label = repair.name
-//         return (
-//           <label key={repair.id} className="flex min-h-11 items-center gap-3">
-//             <input type="checkbox" name="repairs" value={repair.id} defaultChecked={sent.repairs?.includes(String(repair.id))} className="size-5 accent-ink" />
-//             {label}
-//           </label>
-//         )
-//       })}
-//     </fieldset>
-//   )
-// }
+//W6: the repair choice, ready to switch on. Remove the // in front of every line of this function.
+//Then replace the whole line {/* W6: <RepairChoice repairs={props.repairs} /> */} in the form below
+//with <RepairChoice repairs={props.repairs} />. The server side is the two lines the W6 comment in
+//createBooking.ts names (src/tasks/book-slot/createBooking.ts).
+function RepairChoice({ repairs }: { repairs: BookingFormProps['repairs'] }) {
+  // The repairs ticked in the last send, so they stay ticked when the form comes back.
+  const sent = useSentValues()
+  return (
+    <fieldset className="grid gap-3">
+      <legend className="mb-1 font-semibold">
+        Repairs <span className="font-normal text-ink-soft">(optional)</span>
+      </legend>
+      {repairs.map((repair) => {
+        // To show each repair's price too, replace the line under this comment with this line:
+        //   const label = repair.name + ', ' + formatPrice(repair.price)
+        // and add this line at the top of the file, under the other import lines:
+        //   import { formatPrice } from '@/lib/format'
+        // It reads each repair's own price, from the same record as the price list: nothing is copied.
+        const label = repair.name + ', ' + formatPrice(repair.price)
+        return (
+          <label key={repair.id} className="flex min-h-11 items-center gap-3">
+            <input type="checkbox" name="repairs" value={repair.id} defaultChecked={sent.repairs?.includes(String(repair.id))} className="size-5 accent-ink" />
+            {label}
+          </label>
+        )
+      })}
+    </fieldset>
+  )
+}
 
 export function BookingForm(props: BookingFormProps) {
   const { clinic, slots, requestId, member } = props
@@ -133,7 +134,7 @@ export function BookingForm(props: BookingFormProps) {
     // noValidate: the server checks every field and explains each problem in words, the same way in
     // every browser, instead of the browser's own small pop-ups.
     <form action={formAction} noValidate className="grid gap-6">
-      {/* Everything inside can read what the user sent last time (useSentValues). */}
+      {/* Everything inside can read what the everyuser sent last time (useSentValues). */}
       <SentValues value={values}>
         {failed && (
           <div ref={summary} tabIndex={-1} className="rounded-frame">
